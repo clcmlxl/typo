@@ -32,15 +32,84 @@ end
 World(WithinHelpers)
 
 Given /^the blog is set up$/ do
-  Blog.default.update_attributes!({:blog_name => 'Teh Blag',
+  Blog.default.update_attributes!({:blog_name => 'My Blog',
                                    :base_url => 'http://localhost:3000'});
   Blog.default.save!
-  User.create!({:login => 'admin',
+  
+  # Putting :id doesn't really work, Cucumber puts default autoincrement value. Can't override it
+  # :ids are here only for informations purposes, maybe I will find a way to override it later 
+  
+  User.create!({:id => 1,
+                :login => 'admin',
                 :password => 'aaaaaaaa',
                 :email => 'joe@snow.com',
                 :profile_id => 1,
                 :name => 'admin',
                 :state => 'active'})
+  
+  User.create!({:id => 2,
+                :login => 'user',
+                :password => 'user1',
+                :email => 'user1@snow.com',
+                :profile_id => 2,
+                :name => 'user',
+                :state => 'active'})
+
+  User.create!({:id => 3,
+                :login => 'writer',
+                :password => 'writer1',
+                :email => 'writer@snow.com',
+                :profile_id => 2,
+                :name => 'writer',
+                :state => 'active'})
+
+  Article.create!({:id => 3,
+                   :type => 'Article',
+                   :title => 'Hello everyone',
+                   :author => 'writer',
+                   :body => 'Welcome everyone. This is my first article on this blog.',
+                   :extended => '',
+                   :excerpt => '',
+                   :created_at => '2012-11-28 09:55:00 UTC',
+                   :updated_at => '2012-11-28 09:55:00 UTC',
+                   :user_id => 3,
+                   :permalink => 'hello-everyone',
+                   :guid => '1bf3e2ca-ed7b-4562-8a4a-8ce843882222',
+                   :text_filter_id => 5,
+                   :whiteboard => '',
+                   :name => '',
+                   :published => true,
+                   :allow_pings => true,
+                   :allow_comments => true,
+                   :published_at => '2012-11-28 09:58:00 UTC',
+                   :state => 'published',
+                   :settings => {'password' => nil},
+                   :post_type => "read"})
+                   
+  Article.create!({:id => 4,
+                   :type => 'Article',
+                   :title => 'Hi fellows',
+                   :author => 'user',
+                   :body => 'I just wanted to say hi. :)',
+                   :extended => '',
+                   :excerpt => '',
+                   :created_at => '2012-11-28 12:00:00 UTC',
+                   :updated_at => '2012-11-28 12:00:00 UTC',
+                   :user_id => 3,
+                   :permalink => 'hi-fellows',
+                   :guid => '1bf3e2ca-ed7b-4562-8a4a-8ce843887777',
+                   :text_filter_id => 5,
+                   :whiteboard => '',
+                   :name => '',
+                   :published => true,
+                   :allow_pings => true,
+                   :allow_comments => true,
+                   :published_at => '2012-11-28 12:02:00 UTC',
+                   :state => 'published',
+                   :settings => {'password' => nil},
+                   :post_type => "read"})
+
+
 end
 
 And /^I am logged into the admin panel$/ do
@@ -54,6 +123,20 @@ And /^I am logged into the admin panel$/ do
     assert page.has_content?('Login successful')
   end
 end
+
+
+And /^I am logged into the admin panel as blog publisher$/ do
+  visit '/accounts/login'
+  fill_in 'user_login', :with => 'user'
+  fill_in 'user_password', :with => 'user1'
+  click_button 'Login'
+  if page.respond_to? :should
+    page.should have_content('Login successful')
+  else
+    assert page.has_content?('Login successful')
+  end
+end
+
 
 # Single-line step scoper
 When /^(.*) within (.*[^:])$/ do |step, parent|
