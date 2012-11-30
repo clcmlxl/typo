@@ -112,6 +112,19 @@ Given /^the blog is set up$/ do
 
 end
 
+Given /^that Computers and Fun Stuff categories are added$/ do
+  Category.create!({:name => 'Computers',
+                    :permalink => 'computers',
+                    :keywords => 'PC, laptop, notebook, netbook, MAC',
+                    :description => 'This category groups articles that are related to computers.'})
+                    
+  Category.create!({:name => 'Fun Stuff',
+                    :permalink => 'fun-stuff',
+                    :keywords => 'fun, funny, hilarious',
+                    :description => 'Everything what is funny.'})
+
+end
+
 And /^I am logged into the admin panel$/ do
   visit '/accounts/login'
   fill_in 'user_login', :with => 'admin'
@@ -185,7 +198,7 @@ end
 #
 When /^(?:|I )fill in the following:$/ do |fields|
   fields.rows_hash.each do |name, value|
-    When %{I fill in "#{name}" with "#{value}"}
+    step %{I fill in "#{name}" with "#{value}"}
   end
 end
 
